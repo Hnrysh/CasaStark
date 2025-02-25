@@ -15,7 +15,7 @@ namespace CasaStark.Models
         public List<usuario> ObtenerUsuario()
         {
             List<usuario> lista = new List<usuario>();
-             
+
 
             using (SqlConnection con = new SqlConnection(_conexion))
             {
@@ -42,37 +42,52 @@ namespace CasaStark.Models
             return lista;
         }
 
-        public void AgregarUsuario(usuario usuarioNuevo) 
-        { using (SqlConnection con = new SqlConnection(_conexion)) 
-            { try { string query = "Exec spCrearUsuarios @pNombre, @pCorreo, @pContrasena, @pRol"; 
-                    using (SqlCommand cmd = new SqlCommand(query, con)) 
-                    { cmd.Parameters.AddWithValue("@pNombre", usuarioNuevo.Nombre); 
-                        cmd.Parameters.AddWithValue("@pCorreo", usuarioNuevo.Correo); 
+        public void AgregarUsuario(usuario usuarioNuevo)
+        {
+            using (SqlConnection con = new SqlConnection(_conexion))
+            {
+                try
+                {
+                    string query = "Exec spCrearUsuarios @pNombre, @pCorreo, @pContrasena, @pRol";
+                    using (SqlCommand cmd = new SqlCommand(query, con))
+                    {
+                        cmd.Parameters.AddWithValue("@pNombre", usuarioNuevo.Nombre);
+                        cmd.Parameters.AddWithValue("@pCorreo", usuarioNuevo.Correo);
                         cmd.Parameters.AddWithValue("@pContrasena", usuarioNuevo.Contrasena);
                         cmd.Parameters.AddWithValue("@pRol", usuarioNuevo.Rol);
-                        con.Open(); 
-                        cmd.ExecuteNonQuery(); } } catch (Exception ex) { throw new Exception("Error al registrar el usuario: " + ex.Message); 
-                } 
-            } 
+                        con.Open();
+                        cmd.ExecuteNonQuery();
+                    }
+                }
+                catch (Exception ex)
+                {
+                    throw new Exception("Error al registrar el usuario: " + ex.Message);
+                }
+            }
         }
 
-        public void ModificarUsuario(usuario usuarioModificar) 
-        { using (SqlConnection con = new SqlConnection(_conexion)) 
-            { try 
-                { string query = "Exec spModificarUsuario @pId, @pNombre, @pCorreo, @pContrasena,@pRol"; 
-                    using (SqlCommand cmd = new SqlCommand(query, con)) 
-                    { cmd.Parameters.AddWithValue("@pId", usuarioModificar.Id); 
-                        cmd.Parameters.AddWithValue("@pNombre", usuarioModificar.Nombre); 
-                        cmd.Parameters.AddWithValue("@pCorreo", usuarioModificar.Correo); 
+        public void ModificarUsuario(usuario usuarioModificar)
+        {
+            using (SqlConnection con = new SqlConnection(_conexion))
+            {
+                try
+                {
+                    string query = "Exec spModificarUsuario @pId, @pNombre, @pCorreo, @pContrasena,@pRol";
+                    using (SqlCommand cmd = new SqlCommand(query, con))
+                    {
+                        cmd.Parameters.AddWithValue("@pId", usuarioModificar.Id);
+                        cmd.Parameters.AddWithValue("@pNombre", usuarioModificar.Nombre);
+                        cmd.Parameters.AddWithValue("@pCorreo", usuarioModificar.Correo);
                         cmd.Parameters.AddWithValue("@pContrasena", usuarioModificar.Contrasena);
                         cmd.Parameters.AddWithValue("@pRol", usuarioModificar.Rol);
-                        con.Open(); cmd.ExecuteNonQuery(); 
+                        con.Open(); cmd.ExecuteNonQuery();
                     }
-                } catch (Exception ex) 
-                { 
-                    throw new Exception("Error al modificar el usuario: " + ex.Message); 
-                } 
-            } 
+                }
+                catch (Exception ex)
+                {
+                    throw new Exception("Error al modificar el usuario: " + ex.Message);
+                }
+            }
         }
 
         public bool EliminarUsuario(int Id)

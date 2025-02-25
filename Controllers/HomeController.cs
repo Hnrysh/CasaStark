@@ -1,90 +1,73 @@
 using System.Diagnostics;
 using CasaStark.Models;
 using Microsoft.AspNetCore.Mvc;
+using System.Data;
+using System.Data.SqlClient;
 
 namespace CasaStark.Controllers
 {
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
-
         private AccesoDatos _acceso;
-        ListadeUsuarios lista = new ListadeUsuarios();
 
         public HomeController(AccesoDatos acceso)
         {
             _acceso = acceso;
-            
         }
-
-        //public HomeController(ILogger<HomeController> logger)
-        //{
-        //    _logger = logger;
-        //}
 
         public IActionResult Index()
         {
-            return View();
+            ListadeUsuarios model = new ListadeUsuarios();
+            model.ListaUsuarios = _acceso.ObtenerUsuario();
+            return View(model);
         }
 
         [HttpPost]
-
         public IActionResult Submit(usuario modelo)
         {
             if (!ModelState.IsValid)
             {
-                return View("Index");
+                return RedirectToAction("Index");
             }
-
             try
             {
                 _acceso.AgregarUsuario(modelo);
-
-                _acceso.ObtenerUsuario();
-
-                TempData["SuccessMessage"] = "Usuario se guardo con exito!";
+                TempData["SuccessMessage"] = "Usuario se guardó con éxito!";
                 return RedirectToAction("Index");
             }
             catch (Exception ex)
             {
-                TempData["SuccessMessage"] = "Tu usuario no se guardo. Error: " + ex.Message;
-                return View("Index");
+                TempData["SuccessMessage"] = "Tu usuario no se guardó. Error: " + ex.Message;
+                return RedirectToAction("Index");
             }
-
         }
 
         [HttpPost]
-
         public IActionResult ModificarUsuario(usuario modelo)
         {
             if (!ModelState.IsValid)
             {
-                return View("Index"); 
+                return RedirectToAction("Index");
             }
-
             try
             {
                 _acceso.ModificarUsuario(modelo);
-
                 TempData["SuccessMessage"] = "¡Usuario modificado con éxito!";
                 return RedirectToAction("Index");
             }
             catch (Exception ex)
             {
                 TempData["ErrorMessage"] = "No se pudo modificar el usuario. Error: " + ex.Message;
-                return View("Index");
+                return RedirectToAction("Index");
             }
         }
-   
 
         public IActionResult Eliminar(int Id)
         {
-
-
             try
             {
                 bool eliminado = _acceso.EliminarUsuario(Id);
-
                 if (eliminado)
                 {
                     TempData["SuccessMessage"] = "Usuario eliminado con éxito.";
@@ -93,17 +76,14 @@ namespace CasaStark.Controllers
                 {
                     TempData["ErrorMessage"] = "No se pudo eliminar el usuario.";
                 }
-
                 return RedirectToAction("Index");
             }
             catch (Exception ex)
             {
                 TempData["ErrorMessage"] = "Ocurrió un error al eliminar el usuario: " + ex.Message;
-                return View("Index");
+                return RedirectToAction("Index");
             }
         }
-
-
 
         public IActionResult Privacy()
         {
